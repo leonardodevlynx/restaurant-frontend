@@ -1,0 +1,18 @@
+<h2>Caja — Pedidos por pagar</h2>
+
+@if (errorMensaje()) {
+  <p style="color: red;">{{ errorMensaje() }}</p>
+}
+
+@if (pedidos().length === 0) {
+  <p>No hay pedidos por pagar.</p>
+} @else {
+  <ul>
+    @for (p of pedidos(); track p.id) {
+      <li>
+        Mesa {{ p.numeroMesa }} — Total: S/ {{ p.total }}
+        <a [routerLink]="['/caja/pedidos', p.id, 'cobrar']">Cobrar</a>
+      </li>
+    }
+  </ul>
+}

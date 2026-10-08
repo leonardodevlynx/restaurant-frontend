@@ -1,0 +1,45 @@
+<a routerLink="/mozo/mesas">← Volver a mesas</a>
+@if (errorMensaje()) {
+<p style="color: red;">{{ errorMensaje() }}</p>
+}
+
+@if (pedido(); as p) {
+<h2>Pedido de la Mesa {{ p.numeroMesa }}</h2>
+<p>Estado: {{ p.estado }} — Total: S/ {{ p.total }}</p>
+@if (p.observacion) {
+<p>Observación: {{ p.observacion }}</p>
+}
+@if (p.estado !== 'POR_PAGAR') {
+<button (click)="avanzarEstado(p.id)">Avanzar estado</button>
+}
+@if (p.estado === 'PENDIENTE') {
+  <button (click)="cancelarPedido(p.id)">Cancelar pedido</button>
+}
+
+<h3>Detalles</h3>
+@if (p.detalles.length === 0) {
+<p>Aún no hay productos en este pedido.</p>
+} @else {
+<ul>
+    @for (d of p.detalles; track d.id) {
+    <li>{{ d.cantidad }} x {{ d.nombreProducto }} — S/ {{ d.subtotal }}</li>
+    }
+</ul>
+}
+@if (p.estado === 'PENDIENTE') {
+<h3>Agregar productos</h3>
+@if (productos().length === 0) {
+<p>No hay productos disponibles.</p>
+} @else {
+<ul>
+    @for (prod of productos(); track prod.id) {
+    <li>
+        {{ prod.nombre }} — S/ {{ prod.precio }}
+        <input #cantidad type="number" min="1" value="1" style="width: 60px;">
+        <button (click)="agregarProducto(p.id, prod.id, cantidad.value)">Agregar</button>
+    </li>
+    }
+</ul>
+}
+}
+}

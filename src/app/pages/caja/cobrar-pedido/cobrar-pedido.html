@@ -1,0 +1,45 @@
+<a routerLink="/caja/pedidos">← Volver a caja</a>
+
+@if (errorMensaje()) {
+<p style="color: red;">{{ errorMensaje() }}</p>
+}
+
+@if (comprobante(); as c) {
+<h2>Comprobante emitido</h2>
+<p>{{ c.tipo }} {{ c.serie }}-{{ c.numero }}</p>
+<p>Valor de venta: S/ {{ c.valorVenta }} — IGV: S/ {{ c.igv }} — Total: S/ {{ c.total }}</p>
+<p>Estado: {{ c.estado }}</p>
+} @else {
+@if (pedido(); as p) {
+<h2>Cobrar pedido de la Mesa {{ p.numeroMesa }}</h2>
+<ul>
+  @for (d of p.detalles; track d.id) {
+  <li>{{ d.cantidad }} x {{ d.nombreProducto }} — S/ {{ d.subtotal }}</li>
+  }
+</ul>
+<p><strong>Total: S/ {{ p.total }}</strong></p>
+
+<h3>Tipo de comprobante</h3>
+<button (click)="cambiarTipo('BOLETA')">Boleta</button>
+<button (click)="cambiarTipo('FACTURA')">Factura</button>
+<p>Seleccionado: {{ tipo() }}</p>
+n
+@if (tipo() === 'FACTURA') {
+<input #ruc placeholder="RUC (11 dígitos)" maxlength="11">
+<button (click)="buscarRuc(ruc.value)" [disabled]="buscando()">Buscar</button>
+<br>
+<input #razon placeholder="Razón social" [value]="datosCliente()?.nombre ?? ''">
+@if (datosCliente()?.direccion) {
+<p>Dirección: {{ datosCliente()?.direccion }}</p>
+}
+<button (click)="emitir(p.id, ruc.value, razon.value, '')">Emitir factura</button>
+} @else {
+<input #dni placeholder="DNI (opcional, 8 dígitos)" maxlength="8">
+<button (click)="buscarDni(dni.value)" [disabled]="buscando()">Buscar</button>
+@if (datosCliente(); as d) {
+<p>Cliente: <strong>{{ d.nombre }}</strong></p>
+}
+<button (click)="emitir(p.id, '', datosCliente()?.nombre ?? '', dni.value)">Emitir boleta</button>
+}
+}
+}

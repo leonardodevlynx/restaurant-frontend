@@ -1,0 +1,25 @@
+<h2>Lista de Mesas</h2>
+
+@if (errorMensaje()) {
+<p style="color: red;">{{ errorMensaje() }}</p>
+}
+
+@if (mesas().length === 0) {
+<p>No hay mesas registradas todavía.</p>
+} @else {
+<ul>
+  @for (mesa of mesas(); track mesa.id) {
+  <li>
+    Mesa {{ mesa.numero }} — Capacidad: {{ mesa.capacidad }} — Estado: {{ mesa.estado }}
+    @if (mesa.estado === 'DISPONIBLE' || mesa.estado === 'RESERVADA') {
+    <button (click)="crearPedido(mesa.id)">Crear pedido</button>
+    }
+    @if (mesa.estado === 'OCUPADA') {
+    @if (pedidoIdDeMesa(mesa.numero); as pedidoId) {
+    <a [routerLink]="['/mozo/pedidos', pedidoId]">Ver pedido</a>
+    }
+    }
+  </li>
+  }
+</ul>
+}
